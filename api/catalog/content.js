@@ -1,5 +1,5 @@
 // Vercel Serverless Function for Catalog API
-import { Pool } from 'pg';
+const { Pool } = require('pg');
 
 // Create PostgreSQL connection pool
 const pool = new Pool({
@@ -12,7 +12,7 @@ const pool = new Pool({
   max: 1, // Serverless: use minimal connections
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -97,6 +97,7 @@ export default async function handler(req, res) {
       success: false,
       error: 'Failed to fetch content',
       message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
-}
+};

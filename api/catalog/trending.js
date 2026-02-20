@@ -1,5 +1,5 @@
 // Vercel Serverless Function for Trending Content
-import { Pool } from 'pg';
+const { Pool } = require('pg');
 
 const pool = new Pool({
   host: process.env.POSTGRES_HOST,
@@ -11,7 +11,7 @@ const pool = new Pool({
   max: 1,
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -69,4 +69,4 @@ export default async function handler(req, res) {
       message: error.message,
     });
   }
-}
+};

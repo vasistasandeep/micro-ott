@@ -3,6 +3,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import rateLimit from 'express-rate-limit';
 import { createLogger } from '@ott/shared';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -18,6 +19,10 @@ const limiter = rateLimit({
 
 app.use(limiter);
 app.use(express.json());
+
+// Serve static files from public directory
+const publicPath = path.join(__dirname, '../../../public');
+app.use(express.static(publicPath));
 
 // Health check
 app.get('/health', (req, res) => {

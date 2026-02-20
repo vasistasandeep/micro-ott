@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 const databaseProvider = {
   provide: 'DATABASE_POOL',
   useFactory: () => {
-    return new Pool({
+    const config: any = {
       host: process.env.POSTGRES_HOST || 'localhost',
       port: parseInt(process.env.POSTGRES_PORT || '5432'),
       database: process.env.POSTGRES_DB || 'ott_catalog',
@@ -13,7 +13,16 @@ const databaseProvider = {
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,
-    });
+    };
+
+    // Enable SSL for production (Neon requires SSL)
+    if (process.env.POSTGRES_SSL === 'true' || process.env.NODE_ENV === 'production') {
+      config.ssl = {
+        rejectUnauthorized: false, // Required for Neon
+      };
+    }
+
+    return new Pool(config);
   },
 };
 

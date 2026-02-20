@@ -3,13 +3,22 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = new Pool({
+const poolConfig: any = {
   host: process.env.POSTGRES_HOST || 'localhost',
   port: parseInt(process.env.POSTGRES_PORT || '5432'),
   database: process.env.POSTGRES_DB || 'ott_catalog',
   user: process.env.POSTGRES_USER || 'ott_user',
   password: process.env.POSTGRES_PASSWORD || 'ott_password',
-});
+};
+
+// Enable SSL for production (Neon requires SSL)
+if (process.env.POSTGRES_SSL === 'true' || process.env.NODE_ENV === 'production') {
+  poolConfig.ssl = {
+    rejectUnauthorized: false,
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 // Movie title templates for generating diverse content
 const movieTitles = [

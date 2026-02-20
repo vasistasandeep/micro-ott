@@ -3,250 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTT Platform - Stream Movies & TV Shows</title>
+    <title>OTT Platform - Stream Movies, TV Shows & Sports</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-left">
-                <h1 class="logo">🎬 OTT Platform</h1>
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="8" fill="#E50914"/>
+                        <path d="M12 10L20 20L12 30V10Z" fill="white"/>
+                        <path d="M20 10L28 20L20 30V10Z" fill="white" opacity="0.7"/>
+                    </svg>
+                    <span>StreamFlix</span>
+                </div>
                 <div class="nav-links">
-                    <a href="#" class="nav-link active" data-page="home">Home</a>
-                    <a href="#" class="nav-link" data-page="movies">Movies</a>
-                    <a href="#" class="nav-link" data-page="tvshows">TV Shows</a>
-                    <a href="#" class="nav-link" data-page="sports">Sports</a>
+                    <a href="#" class="nav-link active" data-filter="all">Home</a>
+                    <a href="#" class="nav-link" data-filter="movie">Movies</a>
+                    <a href="#" class="nav-link" data-filter="tv_show">TV Shows</a>
+                    <a href="#" class="nav-link" data-filter="sports">Sports</a>
                 </div>
             </div>
             <div class="nav-right">
-                <input type="text" id="searchInput" placeholder="Search..." class="search-input">
-                <button id="profileBtn" class="profile-btn">👤</button>
+                <div class="search-container">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search titles..." class="search-input">
+                </div>
+                <button class="icon-btn" id="notificationBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+                    </svg>
+                </button>
+                <div class="profile-menu">
+                    <button class="profile-btn" id="profileBtn">
+                        <img src="https://i.pravatar.cc/40?img=1" alt="Profile">
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Auth Modal -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="authTitle">Sign In</h2>
-            <form id="authForm">
-                <input type="email" id="authEmail" placeholder="Email" required>
-                <input type="password" id="authPassword" placeholder="Password" required>
-                <button type="submit" id="authSubmit">Sign In</button>
-                <p class="auth-toggle">
-                    <span id="authToggleText">New user?</span>
-                    <a href="#" id="authToggleLink">Sign Up</a>
-                </p>
-            </form>
-        </div>
-    </div>
-
-    <!-- Profile Selection Modal -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <h2>Who's Watching?</h2>
-            <div id="profileList" class="profile-list"></div>
-            <button id="addProfileBtn" class="btn-secondary">+ Add Profile</button>
-        </div>
-    </div>
-
-    <!-- Video Player Modal -->
-    <div id="playerModal" class="modal player-modal">
-        <div class="player-container">
-            <button class="close-player">&times;</button>
-            
-            <div class="video-wrapper">
-                <video id="videoPlayer"></video>
-                
-                <div class="loading-spinner"></div>
-                <button class="center-play-btn show">▶</button>
-                
-                <!-- Custom Controls -->
-                <div class="custom-controls">
-                    <div class="progress-container" id="progressContainer">
-                        <div class="buffer-bar" id="bufferBar"></div>
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    
-                    <div class="controls-row">
-                        <div class="controls-left">
-                            <button class="control-btn play-pause" id="playPauseBtn">▶</button>
-                            <button class="control-btn" id="rewindBtn">⏪</button>
-                            <button class="control-btn" id="forwardBtn">⏩</button>
-                            
-                            <div class="volume-container">
-                                <button class="control-btn" id="volumeBtn">🔊</button>
-                                <div class="volume-slider" id="volumeSlider">
-                                    <div class="volume-level" id="volumeLevel"></div>
-                                </div>
-                            </div>
-                            
-                            <span class="time-display">
-                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
-                            </span>
-                        </div>
-                        
-                        <div class="controls-right">
-                            <div class="settings-menu">
-                                <button class="control-btn" id="settingsBtn">⚙️</button>
-                                <div class="settings-dropdown" id="settingsDropdown">
-                                    <div class="settings-option" onclick="changePlaybackSpeed(0.5)">
-                                        Speed: 0.5x <span id="speed-0.5"></span>
-                                    </div>
-                                    <div class="settings-option" onclick="changePlaybackSpeed(1)">
-                                        Speed: 1x <span id="speed-1">✓</span>
-                                    </div>
-                                    <div class="settings-option" onclick="changePlaybackSpeed(1.5)">
-                                        Speed: 1.5x <span id="speed-1.5"></span>
-                                    </div>
-                                    <div class="settings-option" onclick="changePlaybackSpeed(2)">
-                                        Speed: 2x <span id="speed-2"></span>
-                                    </div>
-                                    <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.2);">
-                                    <div class="settings-option" onclick="changeQuality('auto')">
-                                        Quality: Auto <span id="quality-auto">✓</span>
-                                    </div>
-                                    <div class="settings-option" onclick="changeQuality('1080p')">
-                                        Quality: 1080p <span id="quality-1080p"></span>
-                                    </div>
-                                    <div class="settings-option" onclick="changeQuality('720p')">
-                                        Quality: 720p <span id="quality-720p"></span>
-                                    </div>
-                                    <div class="settings-option" onclick="changeQuality('480p')">
-                                        Quality: 480p <span id="quality-480p"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="control-btn" id="fullscreenBtn">⛶</button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 0l2.5 5.1 5.5.8-4 3.9.9 5.5L8 12.8l-4.9 2.5.9-5.5-4-3.9 5.5-.8L8 0z"/>
+                </svg>
+                <span>TRENDING NOW</span>
             </div>
-            
-            <div class="video-info">
-                <h2 id="videoTitle"></h2>
-                <p id="videoDescription"></p>
-                <div class="video-meta">
-                    <div class="video-meta-item">
-                        <span>⭐</span>
-                        <span id="videoRating"></span>
-                    </div>
-                    <div class="video-meta-item">
-                        <span>🎭</span>
-                        <span id="videoGenres"></span>
-                    </div>
-                    <div class="video-meta-item">
-                        <span>⏱️</span>
-                        <span id="videoDuration"></span>
-                    </div>
-                    <div class="video-meta-item">
-                        <span id="videoTier"></span>
-                    </div>
-                </div>
+            <h1 class="hero-title" id="heroTitle">Loading...</h1>
+            <div class="hero-meta" id="heroMeta">
+                <span class="match-score">98% Match</span>
+                <span class="year">2024</span>
+                <span class="rating">PG-13</span>
+                <span class="duration">2h 15m</span>
+            </div>
+            <p class="hero-description" id="heroDescription">Loading...</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" id="heroPlayBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Play
+                </button>
+                <button class="btn-secondary" id="heroInfoBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    More Info
+                </button>
             </div>
         </div>
-    </div>
+        <div class="hero-gradient"></div>
+    </section>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Hero Section - Spotlight -->
-        <section id="heroSection" class="hero">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span>🔥</span>
-                    <span>TRENDING NOW</span>
-                </div>
-                <h1 id="heroTitle">Loading...</h1>
-                <div class="hero-meta">
-                    <span id="heroMatch">98% Match</span>
-                    <span class="separator">•</span>
-                    <span id="heroYear">2024</span>
-                    <span class="separator">•</span>
-                    <span id="heroRating">PG-13</span>
-                    <span class="separator">•</span>
-                    <span id="heroDuration">2h 15m</span>
-                </div>
-                <p id="heroDescription">Loading...</p>
-                <div class="hero-buttons">
-                    <button id="heroPlayBtn" class="btn-primary">
-                        <span>▶</span>
-                        <span>Play</span>
-                    </button>
-                    <button id="heroInfoBtn" class="btn-secondary">
-                        <span>ℹ</span>
-                        <span>More Info</span>
-                    </button>
+    <!-- Content Sections -->
+    <main class="content-wrapper">
+        <!-- Trending Now -->
+        <section class="content-row">
+            <h2 class="row-title">Trending Now</h2>
+            <div class="content-slider" id="trendingSlider">
+                <div class="slider-loading">
+                    <div class="spinner"></div>
+                    <p>Loading content...</p>
                 </div>
             </div>
         </section>
 
-        <!-- Content Sections -->
-        <div class="content-sections">
-            <!-- Continue Watching -->
-            <section id="continueWatching" class="content-row" style="display: none;">
-                <h2>Continue Watching for You</h2>
-                <div class="carousel-wrapper">
-                    <button class="carousel-nav prev" onclick="scrollCarousel('continueWatchingList', -1)">‹</button>
-                    <div class="content-carousel" id="continueWatchingList"></div>
-                    <button class="carousel-nav next" onclick="scrollCarousel('continueWatchingList', 1)">›</button>
+        <!-- Popular Movies -->
+        <section class="content-row">
+            <h2 class="row-title">Popular Movies</h2>
+            <div class="content-slider" id="moviesSlider">
+                <div class="slider-loading">
+                    <div class="spinner"></div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Trending -->
-            <section class="content-row">
-                <h2>Trending Now</h2>
-                <div class="carousel-wrapper">
-                    <button class="carousel-nav prev" onclick="scrollCarousel('trendingList', -1)">‹</button>
-                    <div class="content-carousel" id="trendingList"></div>
-                    <button class="carousel-nav next" onclick="scrollCarousel('trendingList', 1)">›</button>
+        <!-- TV Shows -->
+        <section class="content-row">
+            <h2 class="row-title">TV Shows</h2>
+            <div class="content-slider" id="tvShowsSlider">
+                <div class="slider-loading">
+                    <div class="spinner"></div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Popular Movies -->
-            <section class="content-row">
-                <h2>Popular Movies</h2>
-                <div class="carousel-wrapper">
-                    <button class="carousel-nav prev" onclick="scrollCarousel('moviesList', -1)">‹</button>
-                    <div class="content-carousel" id="moviesList"></div>
-                    <button class="carousel-nav next" onclick="scrollCarousel('moviesList', 1)">›</button>
+        <!-- Sports -->
+        <section class="content-row">
+            <h2 class="row-title">Sports</h2>
+            <div class="content-slider" id="sportsSlider">
+                <div class="slider-loading">
+                    <div class="spinner"></div>
                 </div>
-            </section>
-
-            <!-- TV Shows -->
-            <section class="content-row">
-                <h2>Popular TV Shows</h2>
-                <div class="carousel-wrapper">
-                    <button class="carousel-nav prev" onclick="scrollCarousel('tvShowsList', -1)">‹</button>
-                    <div class="content-carousel" id="tvShowsList"></div>
-                    <button class="carousel-nav next" onclick="scrollCarousel('tvShowsList', 1)">›</button>
-                </div>
-            </section>
-
-            <!-- All Content -->
-            <section class="content-row">
-                <h2>More to Explore</h2>
-                <div class="carousel-wrapper">
-                    <button class="carousel-nav prev" onclick="scrollCarousel('allContentList', -1)">‹</button>
-                    <div class="content-carousel" id="allContentList"></div>
-                    <button class="carousel-nav next" onclick="scrollCarousel('allContentList', 1)">›</button>
-                </div>
-            </section>
-
-            <!-- Genres -->
-            <section class="content-row">
-                <h2>Browse by Genre</h2>
-                <div class="genre-list" id="genreList"></div>
-            </section>
-        </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2026 OTT Platform. All rights reserved.</p>
-        <p>Made for the Indian market with ❤️</p>
-    </footer>
+    <!-- Video Player Modal -->
+    <div class="player-modal" id="playerModal">
+        <div class="player-container">
+            <button class="close-player" id="closePlayer">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+                    <path d="M25.3 8.7l-2-2L16 14l-7.3-7.3-2 2L14 16l-7.3 7.3 2 2L16 18l7.3 7.3 2-2L18 16l7.3-7.3z"/>
+                </svg>
+            </button>
+            
+            <video id="videoPlayer" class="video-player"></video>
+            
+            <div class="player-controls" id="playerControls">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-filled" id="progressFilled"></div>
+                        <div class="progress-handle" id="progressHandle"></div>
+                    </div>
+                </div>
+                
+                <div class="controls-bottom">
+                    <div class="controls-left">
+                        <button class="control-btn" id="playPauseBtn">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+                                <path d="M10 8l12 8-12 8V8z"/>
+                            </svg>
+                        </button>
+                        <button class="control-btn" id="volumeBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                            </svg>
+                        </button>
+                        <span class="time-display">
+                            <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                        </span>
+                    </div>
+                    
+                    <div class="controls-right">
+                        <button class="control-btn" id="settingsBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                            </svg>
+                        </button>
+                        <button class="control-btn" id="fullscreenBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-large"></div>
+        <p>Loading your content...</p>
+    </div>
 
     <script src="app.js"></script>
 </body>

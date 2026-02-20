@@ -1,16 +1,5 @@
 // Vercel Serverless Function for Catalog API
-const { Pool } = require('pg');
-
-// Create PostgreSQL connection pool
-const pool = new Pool({
-  host: process.env.POSTGRES_HOST,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  database: process.env.POSTGRES_DB,
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  max: 1, // Serverless: use minimal connections
-});
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
   // Enable CORS
@@ -26,7 +15,19 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Create a new client for each request (serverless best practice)
+  const client = new Client({
+    host: process.env.POSTGRES_HOST,
+    port: 5432,
+    database: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  });
+
   try {
+    await client.connect();
+    
     const { limit = 20, offset = 0, type, genre } = req.query;
 
     let query = `
@@ -80,7 +81,7 @@ module.exports = async function handler(req, res) {
     `;
     params.push(parseInt(limit), parseInt(offset));
 
-    const result = await pool.query(query, params);
+    const result = await client.query(query, params);
 
     res.status(200).json({
       success: true,
@@ -97,7 +98,15 @@ module.exports = async function handler(req, res) {
       success: false,
       error: 'Failed to fetch content',
       message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      details: process.env.NODE_ENV === 'development' ? {
+        host: process.env.POSTGRES_HOST,
+        database: process.env.POSTGRES_DB,
+        user: process.env.POSTGRES_USER,
+        passwordType: typeof process.env.POSTGRES_PASSWORD,
+        passwordLength: process.env.POSTGRES_PASSWORD ? process.env.POSTGRES_PASSWORD.length : 0
+      } : undefined
     });
+  } finally {
+    await client.end();
   }
 };

@@ -1,45 +1,16 @@
 # 🚀 Quick Deploy Commands
 
-Copy and paste these commands in order:
+## ⚡ Vercel-Only Deployment (No Railway Needed!)
 
-## 1️⃣ Deploy Backend to Railway
+Since Railway trial expired, everything now runs on Vercel serverless functions.
 
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Create project
-railway init
-
-# Deploy API Gateway
-cd services/api-gateway
-railway up
-```
-
-**After deployment:**
-1. Go to https://railway.app/dashboard
-2. Click your project → api-gateway service
-3. Click "Variables" → Add your database credentials from `.env.production`
-4. Click "Settings" → "Generate Domain" → Copy the URL
-
----
-
-## 2️⃣ Update Vercel Config
-
-Edit `vercel.json` and replace `[YOUR-RAILWAY-URL]` with your Railway URL from step 1.
+### Step 1: Install Dependencies
 
 ```bash
-# Commit the change
-git add vercel.json
-git commit -m "Add Railway backend URL"
+npm install
 ```
 
----
-
-## 3️⃣ Deploy Frontend to Vercel
+### Step 2: Deploy to Vercel
 
 ```bash
 # Install Vercel CLI
@@ -47,6 +18,17 @@ npm install -g vercel
 
 # Login
 vercel login
+
+# Deploy
+vercel
+
+# Add environment variables (one-time setup)
+vercel env add POSTGRES_HOST
+vercel env add POSTGRES_PORT
+vercel env add POSTGRES_DB
+vercel env add POSTGRES_USER
+vercel env add POSTGRES_PASSWORD
+vercel env add POSTGRES_SSL
 
 # Deploy to production
 vercel --prod
@@ -62,23 +44,45 @@ Test it: Open the URL in your browser and check if content loads.
 
 ---
 
-## 🔧 If Something Goes Wrong
+## 🔧 Alternative: Add Variables via Dashboard
 
-### Test Railway backend directly:
+1. Go to https://vercel.com/dashboard
+2. Click your project
+3. Settings → Environment Variables
+4. Add all variables from `.env.production`
+5. Redeploy: `vercel --prod`
+
+---
+
+## 📊 What's Deployed
+
+- ✅ Frontend (public folder)
+- ✅ Backend APIs (api folder - serverless functions)
+- ✅ Connected to your cloud databases
+
+**Cost**: $0/month (Vercel free tier)
+
+---
+
+## 🐛 If Something Goes Wrong
+
+### Test APIs directly:
 ```bash
-curl https://your-railway-url/api/catalog/content?limit=5
+curl https://your-vercel-url.vercel.app/api/catalog/content?limit=5
 ```
 
 Should return JSON with content data.
 
-### Check Railway logs:
-1. Go to Railway dashboard
-2. Click api-gateway service
-3. Click "Logs" tab
-
 ### Check Vercel logs:
 1. Go to Vercel dashboard
 2. Click your project
-3. Click latest deployment
-4. Click "Logs" tab
+3. Click "Deployments"
+4. Click latest deployment
+5. Click "Functions" tab to see logs
+
+---
+
+## 📚 Full Guide
+
+See `VERCEL_ONLY_DEPLOY.md` for detailed instructions.
 

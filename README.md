@@ -1,4 +1,4 @@
-# 🎬 OTT Platform - Netflix-Scale Streaming Service
+# 🎬 OTT Platform - Enterprise Streaming Service
 
 A production-ready OTT (Over-The-Top) streaming platform built with microservices architecture, designed for the Indian market with support for Movies, TV Shows, and Sports content.
 
@@ -9,7 +9,7 @@ A production-ready OTT (Over-The-Top) streaming platform built with microservice
 ## ✨ Features
 
 ### 🎯 Core Features
-- **Netflix-Style UI** - Modern, responsive interface with horizontal scrolling trays
+- **Modern Streaming UI** - Responsive interface with horizontal scrolling trays
 - **Multi-Format Content** - Movies, TV Shows (multi-season), and Sports
 - **Video Streaming** - HLS/DASH adaptive streaming (144p-1080p)
 - **User Authentication** - JWT-based auth with multi-profile support (up to 5 profiles)
@@ -91,7 +91,7 @@ ott-platform/
 │   └── types/              # TypeScript types
 ├── public/                  # Frontend application
 │   ├── index.html          # Main UI
-│   ├── styles.css          # Netflix-style design
+│   ├── styles.css          # Modern streaming platform design
 │   └── app.js              # Application logic
 ├── infrastructure/          # Infrastructure configs
 │   ├── sql/                # Database schemas
@@ -121,7 +121,7 @@ All with working HLS video streams!
 
 ### Frontend
 - **Framework**: Vanilla JavaScript (no dependencies)
-- **Styling**: CSS3 with Netflix-inspired design
+- **Styling**: CSS3 with modern streaming platform design
 - **Video Player**: Custom HTML5 player with HLS support
 
 ### Infrastructure
@@ -249,10 +249,10 @@ docker ps
 ## 🎨 UI Features
 
 - **Spotlight Hero** - Full-screen featured content
-- **Horizontal Trays** - Netflix-style scrolling carousels
+- **Horizontal Trays** - Smooth scrolling carousels for content discovery
 - **Content Cards** - Hover overlays with action buttons
 - **Responsive Design** - Mobile, tablet, desktop optimized
-- **Dark Theme** - Netflix-inspired color scheme
+- **Dark Theme** - Modern streaming platform color scheme
 - **Smooth Animations** - Professional transitions
 
 ## 🔐 Security

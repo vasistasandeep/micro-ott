@@ -1,7 +1,7 @@
 {
   "name": "ott-platform",
   "version": "1.0.0",
-  "description": "Netflix-scale OTT streaming platform for Indian market",
+  "description": "Enterprise-scale OTT streaming platform for Indian market",
   "private": true,
   "workspaces": [
     "services/*",

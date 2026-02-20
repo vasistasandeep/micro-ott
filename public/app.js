@@ -335,17 +335,22 @@ async function addToWatchlist(contentId) {
 // Hero Section
 function setupHero() {
     if (allContent.length === 0) return;
-    
+
     const featured = allContent[0];
     const hero = document.getElementById('heroSection');
-    
-    hero.style.backgroundImage = `url(${featured.poster_url || featured.thumbnail_url || 'https://via.placeholder.com/1920x1080'})`;
+
+    // Use a high-quality spotlight image (landscape format for hero banner)
+    const spotlightSeed = `spotlight-${featured.id || 'hero'}`;
+    const spotlightImage = `https://picsum.photos/seed/${spotlightSeed}/1920/800`;
+
+    hero.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%), url(${spotlightImage})`;
     document.getElementById('heroTitle').textContent = featured.title;
     document.getElementById('heroDescription').textContent = featured.description || 'No description available';
-    
+
     document.getElementById('heroPlayBtn').onclick = () => playContent(featured);
     document.getElementById('heroInfoBtn').onclick = () => showContentInfo(featured);
 }
+
 
 // Video Player
 let currentContent = null;

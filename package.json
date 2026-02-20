@@ -1,0 +1,42 @@
+{
+  "name": "ott-platform",
+  "version": "1.0.0",
+  "description": "Netflix-scale OTT streaming platform for Indian market",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:auth\" \"npm run dev:catalog\" \"npm run dev:streaming\"",
+    "dev:gateway": "npm run dev --workspace=services/api-gateway",
+    "dev:auth": "npm run dev --workspace=services/auth-service",
+    "dev:catalog": "npm run dev --workspace=services/catalog-service",
+    "dev:streaming": "npm run dev --workspace=services/streaming-service",
+    "dev:activity": "npm run dev --workspace=services/user-activity-service",
+    "dev:recommendations": "npm run dev --workspace=services/recommendation-service",
+    "dev:cms": "npm run dev --workspace=services/cms-service",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "migrate": "npm run migrate --workspace=services/catalog-service",
+    "seed": "npm run seed --workspace=services/catalog-service",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}

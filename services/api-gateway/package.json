@@ -1,0 +1,26 @@
+{
+  "name": "@ott/api-gateway",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/platform-express": "^10.0.0",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "express-rate-limit": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "@ott/shared": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/express": "^4.17.17",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.6"
+  }
+}

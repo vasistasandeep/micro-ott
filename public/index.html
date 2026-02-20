@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTT Platform - Stream Movies & TV Shows</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <h1 class="logo">🎬 OTT Platform</h1>
+                <div class="nav-links">
+                    <a href="#" class="nav-link active" data-page="home">Home</a>
+                    <a href="#" class="nav-link" data-page="movies">Movies</a>
+                    <a href="#" class="nav-link" data-page="tvshows">TV Shows</a>
+                    <a href="#" class="nav-link" data-page="sports">Sports</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <input type="text" id="searchInput" placeholder="Search..." class="search-input">
+                <button id="profileBtn" class="profile-btn">👤</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="authTitle">Sign In</h2>
+            <form id="authForm">
+                <input type="email" id="authEmail" placeholder="Email" required>
+                <input type="password" id="authPassword" placeholder="Password" required>
+                <button type="submit" id="authSubmit">Sign In</button>
+                <p class="auth-toggle">
+                    <span id="authToggleText">New user?</span>
+                    <a href="#" id="authToggleLink">Sign Up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Selection Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>Who's Watching?</h2>
+            <div id="profileList" class="profile-list"></div>
+            <button id="addProfileBtn" class="btn-secondary">+ Add Profile</button>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div id="playerModal" class="modal player-modal">
+        <div class="player-container">
+            <button class="close-player">&times;</button>
+            
+            <div class="video-wrapper">
+                <video id="videoPlayer"></video>
+                
+                <div class="loading-spinner"></div>
+                <button class="center-play-btn show">▶</button>
+                
+                <!-- Custom Controls -->
+                <div class="custom-controls">
+                    <div class="progress-container" id="progressContainer">
+                        <div class="buffer-bar" id="bufferBar"></div>
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    
+                    <div class="controls-row">
+                        <div class="controls-left">
+                            <button class="control-btn play-pause" id="playPauseBtn">▶</button>
+                            <button class="control-btn" id="rewindBtn">⏪</button>
+                            <button class="control-btn" id="forwardBtn">⏩</button>
+                            
+                            <div class="volume-container">
+                                <button class="control-btn" id="volumeBtn">🔊</button>
+                                <div class="volume-slider" id="volumeSlider">
+                                    <div class="volume-level" id="volumeLevel"></div>
+                                </div>
+                            </div>
+                            
+                            <span class="time-display">
+                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                            </span>
+                        </div>
+                        
+                        <div class="controls-right">
+                            <div class="settings-menu">
+                                <button class="control-btn" id="settingsBtn">⚙️</button>
+                                <div class="settings-dropdown" id="settingsDropdown">
+                                    <div class="settings-option" onclick="changePlaybackSpeed(0.5)">
+                                        Speed: 0.5x <span id="speed-0.5"></span>
+                                    </div>
+                                    <div class="settings-option" onclick="changePlaybackSpeed(1)">
+                                        Speed: 1x <span id="speed-1">✓</span>
+                                    </div>
+                                    <div class="settings-option" onclick="changePlaybackSpeed(1.5)">
+                                        Speed: 1.5x <span id="speed-1.5"></span>
+                                    </div>
+                                    <div class="settings-option" onclick="changePlaybackSpeed(2)">
+                                        Speed: 2x <span id="speed-2"></span>
+                                    </div>
+                                    <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.2);">
+                                    <div class="settings-option" onclick="changeQuality('auto')">
+                                        Quality: Auto <span id="quality-auto">✓</span>
+                                    </div>
+                                    <div class="settings-option" onclick="changeQuality('1080p')">
+                                        Quality: 1080p <span id="quality-1080p"></span>
+                                    </div>
+                                    <div class="settings-option" onclick="changeQuality('720p')">
+                                        Quality: 720p <span id="quality-720p"></span>
+                                    </div>
+                                    <div class="settings-option" onclick="changeQuality('480p')">
+                                        Quality: 480p <span id="quality-480p"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="control-btn" id="fullscreenBtn">⛶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-info">
+                <h2 id="videoTitle"></h2>
+                <p id="videoDescription"></p>
+                <div class="video-meta">
+                    <div class="video-meta-item">
+                        <span>⭐</span>
+                        <span id="videoRating"></span>
+                    </div>
+                    <div class="video-meta-item">
+                        <span>🎭</span>
+                        <span id="videoGenres"></span>
+                    </div>
+                    <div class="video-meta-item">
+                        <span>⏱️</span>
+                        <span id="videoDuration"></span>
+                    </div>
+                    <div class="video-meta-item">
+                        <span id="videoTier"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section - Spotlight -->
+        <section id="heroSection" class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🔥</span>
+                    <span>TRENDING NOW</span>
+                </div>
+                <h1 id="heroTitle">Loading...</h1>
+                <div class="hero-meta">
+                    <span id="heroMatch">98% Match</span>
+                    <span class="separator">•</span>
+                    <span id="heroYear">2024</span>
+                    <span class="separator">•</span>
+                    <span id="heroRating">PG-13</span>
+                    <span class="separator">•</span>
+                    <span id="heroDuration">2h 15m</span>
+                </div>
+                <p id="heroDescription">Loading...</p>
+                <div class="hero-buttons">
+                    <button id="heroPlayBtn" class="btn-primary">
+                        <span>▶</span>
+                        <span>Play</span>
+                    </button>
+                    <button id="heroInfoBtn" class="btn-secondary">
+                        <span>ℹ</span>
+                        <span>More Info</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- Continue Watching -->
+            <section id="continueWatching" class="content-row" style="display: none;">
+                <h2>Continue Watching for You</h2>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav prev" onclick="scrollCarousel('continueWatchingList', -1)">‹</button>
+                    <div class="content-carousel" id="continueWatchingList"></div>
+                    <button class="carousel-nav next" onclick="scrollCarousel('continueWatchingList', 1)">›</button>
+                </div>
+            </section>
+
+            <!-- Trending -->
+            <section class="content-row">
+                <h2>Trending Now</h2>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav prev" onclick="scrollCarousel('trendingList', -1)">‹</button>
+                    <div class="content-carousel" id="trendingList"></div>
+                    <button class="carousel-nav next" onclick="scrollCarousel('trendingList', 1)">›</button>
+                </div>
+            </section>
+
+            <!-- Popular Movies -->
+            <section class="content-row">
+                <h2>Popular Movies</h2>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav prev" onclick="scrollCarousel('moviesList', -1)">‹</button>
+                    <div class="content-carousel" id="moviesList"></div>
+                    <button class="carousel-nav next" onclick="scrollCarousel('moviesList', 1)">›</button>
+                </div>
+            </section>
+
+            <!-- TV Shows -->
+            <section class="content-row">
+                <h2>Popular TV Shows</h2>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav prev" onclick="scrollCarousel('tvShowsList', -1)">‹</button>
+                    <div class="content-carousel" id="tvShowsList"></div>
+                    <button class="carousel-nav next" onclick="scrollCarousel('tvShowsList', 1)">›</button>
+                </div>
+            </section>
+
+            <!-- All Content -->
+            <section class="content-row">
+                <h2>More to Explore</h2>
+                <div class="carousel-wrapper">
+                    <button class="carousel-nav prev" onclick="scrollCarousel('allContentList', -1)">‹</button>
+                    <div class="content-carousel" id="allContentList"></div>
+                    <button class="carousel-nav next" onclick="scrollCarousel('allContentList', 1)">›</button>
+                </div>
+            </section>
+
+            <!-- Genres -->
+            <section class="content-row">
+                <h2>Browse by Genre</h2>
+                <div class="genre-list" id="genreList"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 OTT Platform. All rights reserved.</p>
+        <p>Made for the Indian market with ❤️</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

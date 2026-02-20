@@ -1,15 +1,5 @@
 // Vercel Serverless Function for Trending Content
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  host: process.env.POSTGRES_HOST,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  database: process.env.POSTGRES_DB,
-  user: process.env.POSTGRES_USER,
-  password: String(process.env.POSTGRES_PASSWORD || ''),
-  ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  max: 1,
-});
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,10 +14,20 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const client = new Client({
+    host: process.env.POSTGRES_HOST,
+    port: 5432,
+    database: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  });
+
   try {
+    await client.connect();
+    
     const { limit = 10 } = req.query;
 
-    // Get random trending content (in production, this would be based on view counts)
     const query = `
       SELECT 
         c.id,
@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
       LIMIT $1
     `;
 
-    const result = await pool.query(query, [parseInt(limit)]);
+    const result = await client.query(query, [parseInt(limit)]);
 
     res.status(200).json({
       success: true,
@@ -68,5 +68,7 @@ module.exports = async function handler(req, res) {
       error: 'Failed to fetch trending content',
       message: error.message,
     });
+  } finally {
+    await client.end();
   }
 };

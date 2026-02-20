@@ -1,15 +1,5 @@
 // Vercel Serverless Function for Single Content Item
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  host: process.env.POSTGRES_HOST,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  database: process.env.POSTGRES_DB,
-  user: process.env.POSTGRES_USER,
-  password: String(process.env.POSTGRES_PASSWORD || ''),
-  ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  max: 1,
-});
+const { Client } = require('pg');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,7 +14,18 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const client = new Client({
+    host: process.env.POSTGRES_HOST,
+    port: 5432,
+    database: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  });
+
   try {
+    await client.connect();
+    
     const { id } = req.query;
 
     const contentQuery = `
@@ -43,7 +44,7 @@ module.exports = async function handler(req, res) {
       GROUP BY c.id
     `;
 
-    const contentResult = await pool.query(contentQuery, [id]);
+    const contentResult = await client.query(contentQuery, [id]);
 
     if (contentResult.rows.length === 0) {
       return res.status(404).json({
@@ -61,7 +62,7 @@ module.exports = async function handler(req, res) {
       WHERE content_id = $1
       ORDER BY bitrate_kbps DESC
     `;
-    const variantsResult = await pool.query(variantsQuery, [id]);
+    const variantsResult = await client.query(variantsQuery, [id]);
 
     // Get audio tracks
     const audioQuery = `
@@ -69,7 +70,7 @@ module.exports = async function handler(req, res) {
       FROM audio_tracks
       WHERE content_id = $1
     `;
-    const audioResult = await pool.query(audioQuery, [id]);
+    const audioResult = await client.query(audioQuery, [id]);
 
     // Get subtitles
     const subtitlesQuery = `
@@ -77,7 +78,7 @@ module.exports = async function handler(req, res) {
       FROM subtitles
       WHERE content_id = $1
     `;
-    const subtitlesResult = await pool.query(subtitlesQuery, [id]);
+    const subtitlesResult = await client.query(subtitlesQuery, [id]);
 
     // Get seasons and episodes for TV shows
     let seasons = [];
@@ -103,7 +104,7 @@ module.exports = async function handler(req, res) {
         GROUP BY s.id
         ORDER BY s.season_number
       `;
-      const seasonsResult = await pool.query(seasonsQuery, [id]);
+      const seasonsResult = await client.query(seasonsQuery, [id]);
       seasons = seasonsResult.rows;
     }
 
@@ -124,5 +125,7 @@ module.exports = async function handler(req, res) {
       error: 'Failed to fetch content details',
       message: error.message,
     });
+  } finally {
+    await client.end();
   }
 };
